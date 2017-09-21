@@ -7,8 +7,8 @@ import (
 )
 
 type Posts struct {
-	Title  string        `bson:"title"`
-	UserID bson.ObjectId `bson:"user_id"`
+	Title  string        `bson:"title" json:"title"`
+	UserID bson.ObjectId `bson:"user_id" json:"user_id"`
 }
 
 func All() ([]Posts, error) {
