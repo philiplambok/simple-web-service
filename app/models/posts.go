@@ -1,7 +1,6 @@
-package posts
+package models
 
 import (
-	"github.com/philiplambok/simple-go-webservice/app/models/users"
 	"github.com/philiplambok/simple-go-webservice/app/tools/db"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -11,7 +10,7 @@ type Posts struct {
 	UserID bson.ObjectId `bson:"user_id" json:"user_id"`
 }
 
-func All() ([]Posts, error) {
+func (p Posts) All() ([]Posts, error) {
 	session, err := db.Connect()
 
 	if err != nil {
@@ -30,7 +29,7 @@ func All() ([]Posts, error) {
 	return posts, nil
 }
 
-func GetUsers(posts []Posts) ([]users.Users, error) {
+func (p Posts) GetUsers(posts []Posts) ([]Users, error) {
 	session, err := db.Connect()
 
 	if err != nil {
@@ -39,8 +38,8 @@ func GetUsers(posts []Posts) ([]users.Users, error) {
 
 	usersCollection := session.DB("relation").C("users")
 
-	var dump users.Users
-	var users []users.Users
+	var dump Users
+	var users []Users
 
 	for i, _ := range posts {
 		selector := bson.M{"_id": posts[i].UserID}

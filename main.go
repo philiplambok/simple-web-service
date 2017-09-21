@@ -14,7 +14,11 @@ func main() {
 		Handler: nil,
 	}
 
+	// GET /
 	http.HandleFunc("/", controller.Welcome)
+
+	// GET /profile/:username
+	http.HandleFunc("/profile/", controller.Profile)
 
 	server.ListenAndServe()
 }
