@@ -113,3 +113,36 @@ func CreatePost(response http.ResponseWriter, request *http.Request) {
 
 	return
 }
+
+func Info(response http.ResponseWriter, request *http.Request) {
+	if request.Method != "GET" {
+		message := Message{
+			Body: "Method not allowed!",
+		}
+
+		json.WriteJson(response, message)
+		return
+	}
+
+	splited := strings.Split(request.URL.Path, "/")
+	var post models.Posts
+	post.Title = splited[2]
+
+	result := struct {
+		Post models.Posts `json:"post"`
+		User models.Users `json:"user"`
+	}{}
+
+	var err error
+	result.Post, err = post.Find()
+	if err != nil {
+		return
+	}
+	result.User, err = result.Post.GetUser()
+	if err != nil {
+		return
+	}
+
+	json.WriteJson(response, result)
+	return
+}

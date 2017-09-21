@@ -29,6 +29,25 @@ func (p Posts) All() ([]Posts, error) {
 	return posts, nil
 }
 
+func (p Posts) GetUser() (Users, error) {
+	session, err := db.Connect()
+	if err != nil {
+		return Users{}, err
+	}
+
+	usersCollection := session.DB("relation").C("users")
+
+	var user Users
+	selector := bson.M{"_id": p.UserID}
+	err = usersCollection.Find(selector).One(&user)
+
+	if err != nil {
+		return Users{}, err
+	}
+
+	return user, nil
+}
+
 func (p Posts) GetUsers(posts []Posts) ([]Users, error) {
 	session, err := db.Connect()
 
@@ -84,4 +103,24 @@ func (p Posts) Save() {
 	}
 
 	return
+}
+
+func (p Posts) Find() (Posts, error) {
+	session, err := db.Connect()
+
+	if err != nil {
+		return Posts{}, err
+	}
+
+	postsCollection := session.DB("relation").C("posts")
+
+	result := Posts{}
+	selector := bson.M{"title": p.Title}
+	err = postsCollection.Find(selector).One(&result)
+
+	if err != nil {
+		return Posts{}, err
+	}
+
+	return result, nil
 }

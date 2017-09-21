@@ -1,5 +1,5 @@
 # simple-web-service
-simple web service in golang. (Blogggin)
+simple web service in golang. (Bloggging)
 
 ## Feature
 
