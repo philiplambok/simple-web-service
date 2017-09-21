@@ -20,11 +20,17 @@ func main() {
 	// GET /profile/:username
 	http.HandleFunc("/profile/", controller.Profile)
 
-	// GET /posts/title
+	// GET /posts/:title
 	http.HandleFunc("/info/", controller.Info)
 
 	// POST /posts/create
 	http.HandleFunc("/posts/create/", controller.CreatePost)
+
+	// DELETE /posts/delete/:title
+	http.HandleFunc("/posts/delete/", controller.Delete)
+
+	// PUT /posts/update/:title
+	http.HandleFunc("/posts/update/", controller.Update)
 
 	server.ListenAndServe()
 }

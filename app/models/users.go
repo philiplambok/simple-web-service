@@ -52,3 +52,22 @@ func (u Users) GetPosts() ([]Posts, error) {
 
 	return posts, nil
 }
+
+func (u Users) IsAny() (bool, error) {
+	session, err := db.Connect()
+	if err != nil {
+		return false, err
+	}
+
+	usersCollection := session.DB("relation").C("users")
+
+	selector := bson.M{"username": u.Username, "password": u.Password}
+	err = usersCollection.Find(selector).One(&u)
+
+	// not auth
+	if err != nil {
+		return false, nil
+	}
+
+	return true, nil
+}

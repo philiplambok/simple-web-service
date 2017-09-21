@@ -146,3 +146,66 @@ func Info(response http.ResponseWriter, request *http.Request) {
 	json.WriteJson(response, result)
 	return
 }
+
+func Delete(response http.ResponseWriter, request *http.Request) {
+	if request.Method != "DELETE" {
+		message := Message{}
+		message.Set("Method Not Allowed!")
+
+		json.WriteJson(response, message)
+		return
+	}
+
+	var post models.Posts
+
+	splited := strings.Split(request.URL.Path, "/")
+	post.Title = splited[3]
+
+	err := post.Delete()
+
+	if err != nil {
+		message := Message{}
+		message.Set(post.Title + " " + err.Error())
+		json.WriteJson(response, message)
+		return
+	}
+
+	message := Message{}
+	message.Set("Posts " + post.Title + " Telah Dihapus")
+	json.WriteJson(response, message)
+	return
+}
+
+func Update(response http.ResponseWriter, request *http.Request) {
+	if request.Method != "PUT" {
+		message := Message{}
+		message.Set("Method Not Allowed!")
+		return
+	}
+
+	splited := strings.Split(request.URL.Path, "/")
+	title := splited[3]
+
+	// read json body and set to object
+	result := struct {
+		Post     models.Posts `json="post"`
+		Username string       `json="username"`
+	}{}
+	data, _ := ioutil.ReadAll(request.Body)
+
+	json.ReadJson(data, &result)
+	result.Post.SetUserID(result.Username)
+	err := result.Post.Update(title)
+
+	if err != nil {
+		message := Message{}
+		message.Set("Error " + err.Error())
+		json.WriteJson(response, message)
+		return
+	}
+
+	message := Message{}
+	message.Set("Post " + title + " telah diperbaharui.")
+	json.WriteJson(response, message)
+	return
+}

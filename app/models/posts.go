@@ -124,3 +124,37 @@ func (p Posts) Find() (Posts, error) {
 
 	return result, nil
 }
+
+func (p Posts) Delete() error {
+	session, err := db.Connect()
+
+	if err != nil {
+		return err
+	}
+
+	postsCollection := session.DB("relation").C("posts")
+
+	selector := bson.M{"title": p.Title}
+	err = postsCollection.Remove(selector)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p Posts) Update(title string) error {
+	session, _ := db.Connect()
+
+	postsCollection := session.DB("relation").C("posts")
+
+	selector := bson.M{"title": title}
+	err := postsCollection.Update(selector, p)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
