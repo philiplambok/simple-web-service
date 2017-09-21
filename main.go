@@ -20,5 +20,8 @@ func main() {
 	// GET /profile/:username
 	http.HandleFunc("/profile/", controller.Profile)
 
+	// POST /posts/create
+	http.HandleFunc("/posts/create/", controller.CreatePost)
+
 	server.ListenAndServe()
 }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -9,6 +10,14 @@ import (
 )
 
 func Welcome(response http.ResponseWriter, request *http.Request) {
+
+	if request.Method != "GET" {
+		message := Message{}
+		message.Set("Method Not Allowed!")
+
+		json.WriteJson(response, message)
+		return
+	}
 
 	result := struct {
 		Posts []models.Posts `json:"posts"`
@@ -38,9 +47,18 @@ func Welcome(response http.ResponseWriter, request *http.Request) {
 
 	json.WriteJson(response, result)
 	return
+
 }
 
 func Profile(response http.ResponseWriter, request *http.Request) {
+	if request.Method != "GET" {
+		message := Message{}
+		message.Set("Method Not Allowed!")
+
+		json.WriteJson(response, message)
+		return
+	}
+
 	result := struct {
 		User  models.Users   `json:"user"`
 		Posts []models.Posts `json:"posts"`
@@ -72,5 +90,26 @@ func Profile(response http.ResponseWriter, request *http.Request) {
 	}
 
 	json.WriteJson(response, result)
+	return
+}
+
+func CreatePost(response http.ResponseWriter, request *http.Request) {
+	// read request body
+	body, _ := ioutil.ReadAll(request.Body)
+
+	newPost := struct {
+		Post     models.Posts `json:"post"`
+		Username string       `json:"username"`
+	}{}
+	// unmarhal json to object
+	json.ReadJson(body, &newPost)
+
+	newPost.Post.SetUserID(newPost.Username)
+	newPost.Post.Save()
+
+	message := Message{}
+	message.Set("Post Telah Disimpan.")
+	json.WriteJson(response, message)
+
 	return
 }
