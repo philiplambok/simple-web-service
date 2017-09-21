@@ -15,3 +15,7 @@ func WriteJson(response http.ResponseWriter, obj interface{}) error {
 	response.Write(json)
 	return nil
 }
+
+func ReadJson(data []byte, obj interface{}) {
+	_ = json.Unmarshal(data, &obj)
+}

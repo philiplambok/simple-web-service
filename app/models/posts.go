@@ -54,3 +54,34 @@ func (p Posts) GetUsers(posts []Posts) ([]Users, error) {
 
 	return users, nil
 }
+
+func (p *Posts) SetUserID(username string) {
+	session, err := db.Connect()
+
+	if err != nil {
+		return
+	}
+
+	userCollection := session.DB("relation").C("users")
+	var user Users
+	selector := bson.M{"username": username}
+	err = userCollection.Find(selector).One(&user)
+	p.UserID = user.ID
+}
+
+func (p Posts) Save() {
+	session, err := db.Connect()
+
+	if err != nil {
+		return
+	}
+
+	postsCollection := session.DB("relation").C("posts")
+	err = postsCollection.Insert(&p)
+
+	if err != nil {
+		return
+	}
+
+	return
+}
